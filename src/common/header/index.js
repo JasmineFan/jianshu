@@ -1,8 +1,32 @@
 import React from "react";
 import { CSSTransition } from "react-transition-group";
-import { HeaderWrapper, Logo, Nav, NavItem, NavSearch, Addtion, Button, SearchWrapper } from './style'
+import { HeaderWrapper, Logo, Nav, NavItem, NavSearch, Addtion, Button, SearchWrapper, SearchInfo ,SearchInfoTitle , SearchInfoSwitch, SeachInfoItem, SearchInfoList} from './style'
 import { connect } from 'react-redux' //让header 组件和store 建立连接
 import {actionCreators} from './store'
+
+const getListArea = (show)=>{
+    if(show) {
+        return (
+            <SearchInfo>
+                    <SearchInfoTitle>
+                        热门搜素
+                        <SearchInfoSwitch>换一换</SearchInfoSwitch>
+                    </SearchInfoTitle>
+                    <SearchInfoList>
+                        <SeachInfoItem>教育</SeachInfoItem>
+                        <SeachInfoItem>教育</SeachInfoItem>
+                        <SeachInfoItem>教育</SeachInfoItem>
+                        <SeachInfoItem>教育</SeachInfoItem>
+                        <SeachInfoItem>教育</SeachInfoItem>
+                        <SeachInfoItem>教育</SeachInfoItem>
+                        <SeachInfoItem>教育</SeachInfoItem>
+                    </SearchInfoList>
+                </SearchInfo>
+        )
+    } else {
+        return null
+    }
+}
 
 const Header = (props) => (
     <HeaderWrapper>
@@ -24,6 +48,7 @@ const Header = (props) => (
                 </CSSTransition>
                 <span className={props.focused ? 'focused iconfont' : 'iconfont'}
                 >&#xe637;</span>
+                {getListArea(props.focused)}
             </SearchWrapper>
         </Nav>
         <Addtion>
@@ -38,9 +63,10 @@ const Header = (props) => (
 
 const mapStateToProps = (state) => {
     return {
-        focused: state.header.focused
+        focused: state.get('header').get('focused')
+        // focused: state.getIn(['header', 'focused'])
     }
-}   //state 是store 里面的所有数据
+}  
 
 const mapDispathToProps = (dispatch) => {
     return {
