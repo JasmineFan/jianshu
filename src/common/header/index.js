@@ -4,21 +4,30 @@ import { HeaderWrapper, Logo, Nav, NavItem, NavSearch, Addtion, Button, SearchWr
 import { connect } from 'react-redux' //让header 组件和store 建立连接
 import { actionCreators } from './store'
 class Header extends Component {
+   
     getListArea() {
-        if (this.props.focused) {
+        const {focused, list, page, mouseIn, totalPage,  handleMouseEnter, handleMouseLeave, handleChangePage} = this.props
+        const newList = list.toJS()
+        const pageList = []
+
+        if(newList.length){
+            for(let i=(page-1)*10; i<page*10 ;i++){
+                console.log(newList[i])  //如果不判断newlist ， 最开始会得到10个undefined
+                pageList.push(<SeachInfoItem key={newList[i]}>{newList[i]}</SeachInfoItem>)
+            }
+        }
+       
+        if (focused || mouseIn) {
             return (
-                <SearchInfo>
+                <SearchInfo onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}          
+                >
                     <SearchInfoTitle>
                         热门搜素
-                        <SearchInfoSwitch>换一换</SearchInfoSwitch>
+                        <SearchInfoSwitch onClick={()=>handleChangePage(page, totalPage)}>换一换</SearchInfoSwitch>
                     </SearchInfoTitle>
                     <SearchInfoList>
-                        {
-                            this.props.list.map((item,index) => {
-                                return <SeachInfoItem key={index}>{item}</SeachInfoItem>
-                            })
-                        }
-
+                        {pageList}
                     </SearchInfoList>
                 </SearchInfo>
             )
@@ -27,6 +36,7 @@ class Header extends Component {
         }
     }
     render() {
+        const {focused, handleSearchBlur, handleSearchFocus} = this.props
         return (
             <HeaderWrapper>
                 <Logo href="/" />
@@ -38,14 +48,14 @@ class Header extends Component {
                         <span className="iconfont">&#xe636;</span>
                     </NavItem>
                     <SearchWrapper>
-                        <CSSTransition in={this.props.focused} timeout={200} classNames="slide">
+                        <CSSTransition in={focused} timeout={200} classNames="slide">
                             <NavSearch placeholder="搜素"
-                                className={this.props.focused ? 'focused' : ''}
-                                onFocus={this.props.handleSearchFocus}
-                                onBlur={this.props.handleSearchBlur}
+                                className={focused ? 'focused' : ''}
+                                onFocus={handleSearchFocus}
+                                onBlur={handleSearchBlur}
                             ></NavSearch>
                         </CSSTransition>
-                        <span className={this.props.focused ? 'focused iconfont' : 'iconfont'}
+                        <span className={focused ? 'focused iconfont' : 'iconfont'}
                         >&#xe637;</span>
                         {this.getListArea()}
                     </SearchWrapper>
@@ -66,7 +76,10 @@ const mapStateToProps = (state) => {
     return {
         focused: state.get('header').get('focused'),
         // focused: state.getIn(['header', 'focused'])
-        list: state.get('header').get('list')
+        list: state.get('header').get('list'),
+        page:state.get('header').get('page'),
+        totalPage:state.get('header').get('totalPage'),
+        mouseIn:state.get('header').get('mouseIn')
     }
 }
 
@@ -78,6 +91,20 @@ const mapDispathToProps = (dispatch) => {
         },
         handleSearchBlur() {
             dispatch(actionCreators.searchBlur())
+        },
+        handleMouseEnter(){
+            dispatch(actionCreators.mouseEnter())
+        },
+        handleMouseLeave(){
+            dispatch(actionCreators.mouseLeave())
+        },
+        handleChangePage(page, totalPage){
+            if(page<totalPage){
+                dispatch(actionCreators.changePage(page+1))
+            } else {
+                dispatch(actionCreators.changePage(1))
+            }
+            
         }
     }
 }
