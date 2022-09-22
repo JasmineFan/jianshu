@@ -12,7 +12,7 @@ class Header extends Component {
 
         if(newList.length){
             for(let i=(page-1)*10; i<page*10 ;i++){
-                console.log(newList[i])  //如果不判断newlist ， 最开始会得到10个undefined
+                // console.log(newList[i])  //如果不判断newlist ， 最开始会得到10个undefined
                 pageList.push(<SeachInfoItem key={newList[i]}>{newList[i]}</SeachInfoItem>)
             }
         }
@@ -24,7 +24,9 @@ class Header extends Component {
                 >
                     <SearchInfoTitle>
                         热门搜素
-                        <SearchInfoSwitch onClick={()=>handleChangePage(page, totalPage)}>换一换</SearchInfoSwitch>
+                        <SearchInfoSwitch onClick={()=>handleChangePage(page, totalPage, this.spinIcon)}>
+                        <span ref={(icon)=>{this.spinIcon = icon}} className="iconfont spin">&#xe851;</span>
+                            换一换</SearchInfoSwitch>
                     </SearchInfoTitle>
                     <SearchInfoList>
                         {pageList}
@@ -36,7 +38,7 @@ class Header extends Component {
         }
     }
     render() {
-        const {focused, handleSearchBlur, handleSearchFocus} = this.props
+        const {focused, handleSearchBlur, handleSearchFocus, list} = this.props
         return (
             <HeaderWrapper>
                 <Logo href="/" />
@@ -51,11 +53,11 @@ class Header extends Component {
                         <CSSTransition in={focused} timeout={200} classNames="slide">
                             <NavSearch placeholder="搜素"
                                 className={focused ? 'focused' : ''}
-                                onFocus={handleSearchFocus}
+                                onFocus={()=>handleSearchFocus(list)}
                                 onBlur={handleSearchBlur}
                             ></NavSearch>
                         </CSSTransition>
-                        <span className={focused ? 'focused iconfont' : 'iconfont'}
+                        <span className={focused ? 'focused iconfont zoom' : 'iconfont zoom'}
                         >&#xe637;</span>
                         {this.getListArea()}
                     </SearchWrapper>
@@ -85,8 +87,12 @@ const mapStateToProps = (state) => {
 
 const mapDispathToProps = (dispatch) => {
     return {
-        handleSearchFocus() {
-            dispatch(actionCreators.getList())
+        handleSearchFocus(list) {
+            // console.log(list)
+            // if(list.size===0){
+            //     dispatch(actionCreators.getList())
+            // }
+           (list.size===0) && dispatch(actionCreators.getList())
             dispatch(actionCreators.searchFocus())
         },
         handleSearchBlur() {
@@ -98,7 +104,16 @@ const mapDispathToProps = (dispatch) => {
         handleMouseLeave(){
             dispatch(actionCreators.mouseLeave())
         },
-        handleChangePage(page, totalPage){
+        handleChangePage(page, totalPage, spin){
+            // console.log(spin.style.transform)
+            let originAngle = spin.style.transform.replace(/[^0-9]/ig,'')
+            if(originAngle) {
+                originAngle = parseInt(originAngle,10)
+            } else {
+                originAngle = 0
+            }
+            spin.style.transform = 'rotate('+ (originAngle+360)+ 'deg)'
+            // console.log(originAngle)
             if(page<totalPage){
                 dispatch(actionCreators.changePage(page+1))
             } else {
