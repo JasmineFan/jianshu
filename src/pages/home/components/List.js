@@ -1,41 +1,44 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { ListItem, ListInfo, LoadMore } from '../style'
-import {connect} from 'react-redux'
-import {actionCreator} from '../store'
+import { connect } from 'react-redux'
+import { actionCreator } from '../store'
+import { Link } from 'react-router-dom'
 
-class List extends Component {
+class List extends PureComponent {
     render() {
-        const {list, getMoreList, page} = this.props
+        const { list, getMoreList, page } = this.props
         return (
             <div>
                 {
-                    list.map((item,index)=>{
+                    list.map((item, index) => {
                         return (
-                            <ListItem key={index}>
-                            <img className="pic" src={item.get('imgUrl')}></img>
-                            <ListInfo>
-                                <h3 className="title">{item.get('title')}</h3>
-                                <p className="desc">{item.get('desc')}</p>
-                            </ListInfo>
-                        </ListItem>  
+                            <Link  key={index} to="/detail">
+                                <ListItem>
+                                    <img className="pic" src={item.get('imgUrl')}></img>
+                                    <ListInfo>
+                                        <h3 className="title">{item.get('title')}</h3>
+                                        <p className="desc">{item.get('desc')}</p>
+                                    </ListInfo>
+                                </ListItem>
+                            </Link>
                         )
                     })
-                }  
-                <LoadMore onClick={()=>getMoreList(page)}>更多文字</LoadMore>           
+                }
+                <LoadMore onClick={() => getMoreList(page)}>更多文字</LoadMore>
             </div>
         )
     }
 }
 
 const mapStatetoprops = (state) => ({
-	list: state.get('home').get('articleList'),
-	page: state.get('home').get('articlePage')
+    list: state.get('home').get('articleList'),
+    page: state.get('home').get('articlePage')
 });
 
-const mapDispatch = (dispatch)=>({
-    getMoreList(page){
+const mapDispatch = (dispatch) => ({
+    getMoreList(page) {
         dispatch(actionCreator.getMoreList(page))
     }
 })
 
-export default connect( mapStatetoprops, mapDispatch )(List);
+export default connect(mapStatetoprops, mapDispatch)(List);
