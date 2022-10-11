@@ -4,7 +4,7 @@ import { GlobalStyleIcon } from "./statics/iconfont/iconfont";
 import Header from "./common/header/index.js";
 import store from "./store/index.js";
 import { Provider } from "react-redux";
-import { BrowserRouter, Route ,Routes} from "react-router-dom";
+import { BrowserRouter, Route } from "react-router-dom";
 import Home from './pages/home'
 import Detail from "./pages/detail";
 
@@ -15,13 +15,15 @@ class App extends Component {
         <Globalstyle />
         <GlobalStyleIcon />
         <Provider store={store}>
-          <div>         
+          <div>
             <BrowserRouter>
+            <div>
               <Header />
-              <Routes>
-                <Route path="/" exact element={ <Home/>}></Route>
-                <Route path="/detail" exact element={ <Detail/> }></Route>
-              </Routes>
+              <Route path="/" exact component={(props)=><Home{...props} />}></Route>
+              <Route path="/detail/:id" exact component={(props)=><Detail {...props} />}></Route>
+              {/* <Route path="/detail" exact component={(props)=><Detail {...props} />}></Route> */}
+              
+              </div>
             </BrowserRouter>
           </div>
         </Provider>
