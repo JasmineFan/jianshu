@@ -7,7 +7,8 @@ import { Provider } from "react-redux";
 import { BrowserRouter, Route } from "react-router-dom";
 import Home from './pages/home'
 import Detail from "./pages/detail";
-
+import Login from './pages/login'
+import Write from './pages/write'
 class App extends Component {
   render() {
     return (
@@ -20,6 +21,8 @@ class App extends Component {
             <div>
               <Header />
               <Route path="/" exact component={(props)=><Home{...props} />}></Route>
+              <Route path="/login" exact component={(props)=><Login{...props} />}></Route>
+              <Route path="/write" exact component={(props)=><Write{...props} />}></Route>
               <Route path="/detail/:id" exact component={(props)=><Detail {...props} />}></Route>
               {/* <Route path="/detail" exact component={(props)=><Detail {...props} />}></Route> */}
               
